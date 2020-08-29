@@ -1,0 +1,5 @@
+Package: {{{name}}}
+Version: {{{version}}}
+Architecture: all
+Maintainer: {{{author}}}
+Description: {{{description}}}
