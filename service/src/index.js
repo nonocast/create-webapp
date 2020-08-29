@@ -7,6 +7,7 @@ const moment = require('moment');
 const app = new Koa();
 const logger = require('./logger');
 const debug = require('debug')('app');
+// const hello = require('hello');
 
 const router = new Router({ prefix: '/api' });
 
@@ -15,7 +16,7 @@ router.get('/', ctx => {
 });
 
 router.get('/message', ctx => {
-  logger.info('foobar, /message');
+  logger.info('/message ' + ctx.query.id);
   ctx.body = { message: `ruby, ${moment().format('HH:mm:ss')}` };
 })
 
@@ -24,4 +25,6 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
-app.listen(config.port, '0.0.0.0');
+app.listen(config.port, '0.0.0.0', () => {
+  logger.info('server started.');
+});

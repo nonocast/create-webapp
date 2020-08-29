@@ -74,6 +74,47 @@ drwxr-xr-x root/root         0 2020-08-29 08:48 ./etc/nginx/sites-enabled/
 
 通过winston输出到文件，通过filebeat采集到ELK分析。
 
+开发环境: 
+```sh
+docker run -d --name="elasticsearch" -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.8.1
+docker run -d --name="kibana" --link elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.8.1
+```
+
+补充: sebp/elk虽然是套餐，但是版本号只有7.8.0, 建议还是跟进官方image更为直接。
+
+然后在filebeat中配置如下:
+```yml
+filebeat.config.inputs:
+  enabled: true
+  path: inputs.d/*.yml
+
+setup.template.settings:
+  index.number_of_shards: 1
+
+output.elasticsearch:
+  hosts: ["host.docker.internal:9200"]
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+```
+
+create-webapp.yml
+
+```yml
+- type: log
+  enabled: true
+  paths:
+    - /var/log/create-webapp/*.log
+
+  json.keys_under_root: true
+  json.overwrite_keys: true
+  json.message_key: message
+  json.add_error_key: true
+```
+
 ### Documentation
 
 - API: swagger。

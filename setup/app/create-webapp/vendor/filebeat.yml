@@ -1,0 +1,15 @@
+filebeat.config.inputs:
+  enabled: true
+  path: inputs.d/*.yml
+
+setup.template.settings:
+  index.number_of_shards: 1
+
+output.elasticsearch:
+  hosts: ["host.docker.internal:9200"]
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
