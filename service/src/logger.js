@@ -16,6 +16,8 @@ const app = format((info, opts) => {
 module.exports = createLogger({
   transports: [
     new transports.Console({
+      handleExceptions: true,
+      json: false,
       format: combine(
         colorize(),
         simple(),
@@ -24,11 +26,12 @@ module.exports = createLogger({
     new transports.DailyRotateFile({
       level: 'debug',
       json: true,
-      filename: 'logs/app-%DATE%.log',
+      filename: '/var/log/create-webapp/app-%DATE%.log',
       datePattern: 'YYYY-MM-DD-HH',
       zippedArchive: false,
       maxSize: '20m',
       maxFiles: '14d',
+      handleExceptions: true,
       format: combine(
         timestamp(),
         app({ app: 'create-webapp' }),

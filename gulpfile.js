@@ -26,11 +26,7 @@ async function clean() {
 
 async function init() {
   await new Promise((resolve, reject) => {
-    src('./setup/DEBIAN/**').pipe(mustache(pkg)).pipe(dest('./dist/image/DEBIAN')).on('end', resolve);
-  });
-
-  await new Promise((resolve, reject) => {
-    src('./setup/gateway/**').pipe(dest('./dist/image/etc/nginx/sites-enabled')).on('end', resolve);
+    src('./setup/**').pipe(mustache(pkg)).pipe(dest('./dist/image/')).on('end', resolve);
   });
 }
 

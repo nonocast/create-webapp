@@ -1,5 +1,6 @@
 {
   "name": "create-webapp",
+  "description": "scaffold of the webapp",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/nonocast/create-webapp.git",
@@ -12,6 +13,7 @@
   "devDependencies": {
     "concurrently": "^5.3.0",
     "debug": "^4.1.1",
+    "docsify": "^4.11.6",
     "fs-extra": "^9.0.1",
     "gulp": "^4.0.2",
     "gulp-mustache": "^5.0.0",

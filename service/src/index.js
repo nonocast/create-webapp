@@ -16,7 +16,7 @@ router.get('/', ctx => {
 
 router.get('/message', ctx => {
   logger.info('foobar, /message');
-  ctx.body = { message: `foobar, ${moment().format('HH:mm:ss')}` };
+  ctx.body = { message: `ruby, ${moment().format('HH:mm:ss')}` };
 })
 
 app

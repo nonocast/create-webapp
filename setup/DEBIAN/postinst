@@ -1,6 +1,0 @@
-#!/bin/sh
-
-cd /app/create-webapp/service
-yarn install --production
-pm2 start
-nginx -s reload
