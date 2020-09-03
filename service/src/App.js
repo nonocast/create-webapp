@@ -1,19 +1,62 @@
 const debug = require('debug')('app');
+const mongoose = require('mongoose');
 const WebServer = require('./server/WebServer');
+const logger = require('./service/logger');
+const config = require('config');
+const version = require('../../package.json').version;
 
 class App {
-  constructor(logger) {
-    this.logger = logger;
+  static get instance() {
+    if (!this._instance) { this._instance = new App(); }
+    return this._instance;
   }
 
-  async open() {
-    this.logger.info(`application starting... pid: ${process.pid}`);
+  constructor() {
+    if (App._instance) { return App._instance; }
     this.webServer = new WebServer();
-    await this.webServer.open();
+    this.version = version;
+    debug(this.version);
+  }
+
+
+  async open() {
+    logger.info(`application starting... pid: ${process.pid}`);
+
+    await this.openDatabase();
+    await this.openWebServer();
+
   }
 
   async close() {
-    this.logger.info('application closing...');
+    await this.closeWebServer();
+    await this.closeDatabase();
+    logger.info('application closed.');
+  }
+
+  async openDatabase() {
+    try {
+      await mongoose.connect(config.db, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true
+      });
+      logger.info(`mongodb connected OK: ${config.db}`);
+    } catch (err) {
+      logger.error(`mongodb connected FAILED: ${config.db}`)
+    }
+  }
+
+  async closeDatabase() {
+    await mongoose.connection.close();
+    logger.info('mongodb closed.');
+  }
+
+  async openWebServer() {
+    await this.webServer.open();
+  }
+
+  async closeWebServer() {
     await this.webServer.close();
   }
 }

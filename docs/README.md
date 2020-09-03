@@ -72,6 +72,12 @@ drwxr-xr-x root/root         0 2020-08-29 08:48 ./etc/nginx/sites-enabled/
 
 ### Logging
 
+log可以分为几个level:
+
+- 应用日志 (Application Log): 帮助用户了解系统使用情况
+- 系统日志 (System Log): 文件, 帮助开发人员诊断
+- 特定日志 (Specify Log): 比如ap访问，设备访问等专项日志，根据应用和规模采用合适的方式 (mongodb, es or file)
+
 通过winston输出到文件，通过filebeat采集到ELK分析。
 shell通过`jq . app-2020-09-04-00.log`
 

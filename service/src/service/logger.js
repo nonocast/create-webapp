@@ -1,10 +1,10 @@
 const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, label, colorize, simple, json } = format;
+const { errors, combine, timestamp, label, colorize, simple, json, printf } = format;
 const chalk = require("chalk");
 const debug = require('debug')('app');
+const config = require('config');
 require('winston-daily-rotate-file');
 
-const config = require('config');
 const moment = require('moment');
 const strip = require('strip-color');
 
@@ -15,8 +15,10 @@ const app = format((info, opts) => {
   return info;
 });
 
-let logger = createLogger({
-  transports: [
+let logger = createLogger();
+
+if (config.logger.file) {
+  logger.add(
     new transports.DailyRotateFile({
       level: 'info',
       json: true,
@@ -25,18 +27,19 @@ let logger = createLogger({
       datePattern: 'YYYY-MM-DD-HH',
       zippedArchive: false,
       maxSize: '20m',
-      maxFiles: '14d',
+      maxFiles: '7d',
       handleExceptions: true,
       format: combine(
+        errors({ stack: true }),
         timestamp(),
         app({ app: 'create-webapp' }),
         json()
       )
     })
-  ]
-});
+  );
+}
 
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+if (config.logger.console) {
   logger.add(
     new transports.Console({
       level: 'debug',
@@ -44,8 +47,9 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
       json: false,
       format: combine(
         colorize(),
+        errors({ stack: true }),
         simple(),
-        format.printf(info => {
+        printf(info => {
           let level = info.level;
           switch (level) {
             case "info":

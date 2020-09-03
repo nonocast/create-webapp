@@ -10,7 +10,6 @@ describe('WebServer', async () => {
 
   before(async () => {
     await webServer.open();
-    debug(webServer.server);
   });
 
   after(async () => {

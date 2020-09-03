@@ -6,12 +6,7 @@ if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'development';
 }
 
-let app = new App(logger);
-
-// global不容易测试
-global.logger = logger;
-global.app = app;
-global.foo = { bar: '123' }
+let app = new App();
 
 let main = async () => {
 	await app.open();
@@ -23,7 +18,7 @@ let cleanup = async () => {
 };
 
 main().then().catch(err => {
-	logger.error(err);
+	logger.error(err.stack);
 });
 
 process.on('SIGINT', cleanup);

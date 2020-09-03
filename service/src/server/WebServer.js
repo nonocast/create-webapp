@@ -9,7 +9,7 @@ const cors = require('@koa/cors');
 const koaJson = require('koa-json');
 const koaBodyParser = require('koa-bodyparser');
 const koaWinstonLogger = require('./middleware/koa-winston-logger');
-const router = require('./routers');
+const routers = require('./routers');
 
 class WebServer {
 	constructor() {
@@ -24,8 +24,7 @@ class WebServer {
 			.use(koaJson())
 			.use(koaBodyParser())
 			// .use(koaMongoose())
-			.use(router.routes())
-			.use(router.allowedMethods());
+			.use(routers())
 
 		return koa;
 	}
@@ -42,7 +41,7 @@ class WebServer {
 
 	async close() {
 		await this.server.close();
-		logger.info('web server closed');
+		logger.info('web server closed.');
 	}
 }
 
