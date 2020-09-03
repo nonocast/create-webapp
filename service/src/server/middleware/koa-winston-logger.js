@@ -97,7 +97,9 @@ function log(winston, ctx, start, len, err, event) {
     }
   };
 
-  winston.log(err || status >= 400 ? 'warn' : 'info', `${ctx.method} ${ctx.originalUrl} ${status} ${context.res.time} ${length ? bytes(length).toLowerCase() : '-'}`, context);
+  console.log(`${err || status >= 400 ? chalk.yellow('warn') : chalk.green('info')}: ${ctx.method} ${ctx.originalUrl} ${status} ${context.res.time} ${length ? bytes(length).toLowerCase() : '-'}`);
+  // save to mongodb
+  // winston.log(err || status >= 400 ? 'warn' : 'info', `${ctx.method} ${ctx.originalUrl} ${status} ${context.res.time} ${length ? bytes(length).toLowerCase() : '-'}`, context);
 }
 
 /**

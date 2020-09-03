@@ -53,6 +53,13 @@ drwxr-xr-x root/root         0 2020-08-29 08:48 ./etc/nginx/sites-enabled/
 -rw-r--r-- root/root       527 2020-08-29 08:43 ./etc/nginx/sites-enabled/create-webapp.conf
 ```
 
+测试DEB:
+`docker run -it -p 80:80 -v <deb file path>:/setup ubuntu bash`
+```sh
+~ /app/create-webapp/bin/install.sh 
+~ /app/create-webapp/bin/start.sh 
+```
+
 参考:
 - [Web程序打包和安装方式 (非docker方式)](https://github.com/nonocast/me/issues/77)
 - [dpkg 及其仓库搭建 · Issue #78](https://github.com/nonocast/me/issues/78)
@@ -66,6 +73,64 @@ drwxr-xr-x root/root         0 2020-08-29 08:48 ./etc/nginx/sites-enabled/
 ### Logging
 
 通过winston输出到文件，通过filebeat采集到ELK分析。
+shell通过`jq . app-2020-09-04-00.log`
+
+```sh
+~ jq . app-2020-09-04-00.log 
+{
+  "message": "application starting... pid: 6267",
+  "level": "info",
+  "timestamp": "2020-09-03T16:37:45.739Z",
+  "app": "create-webapp"
+}
+{
+  "message": "web server started, please visit: http://0.0.0.0:10376 (with development mode)",
+  "level": "info",
+  "timestamp": "2020-09-03T16:37:45.745Z",
+  "app": "create-webapp"
+}
+```
+
+开发环境: 
+```sh
+docker run -d --name="elasticsearch" -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.8.1
+docker run -d --name="kibana" --link elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.8.1
+```
+
+补充: sebp/elk虽然是套餐，但是版本号只有7.8.0, 建议还是跟进官方image更为直接。
+
+然后在filebeat中配置如下:
+```yml
+filebeat.config.inputs:
+  enabled: true
+  path: inputs.d/*.yml
+
+setup.template.settings:
+  index.number_of_shards: 1
+
+output.elasticsearch:
+  hosts: ["host.docker.internal:9200"]
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+```
+
+create-webapp.yml
+
+```yml
+- type: log
+  enabled: true
+  paths:
+    - /var/log/create-webapp/*.log
+
+  json.keys_under_root: true
+  json.overwrite_keys: true
+  json.message_key: message
+  json.add_error_key: true
+```
 
 ### Documentation
 
