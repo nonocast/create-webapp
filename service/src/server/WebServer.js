@@ -11,10 +11,11 @@ const koaJson = require('koa-json');
 const koaBodyParser = require('koa-bodyparser');
 const koaLogger = require('./middleware/koa-logger');
 const koaMongoose = require('./middleware/koa-mongoose');
-const routers = require('./routers');
+const { entries, routers } = require('./routers');
 
 class WebServer {
 	constructor() {
+		this.entries = entries;
 		this.koa = this.build();
 	}
 

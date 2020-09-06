@@ -14,6 +14,7 @@ class App {
     return this._instance;
   }
 
+  // do not call new App(), use App.instance instead
   constructor() {
     if (App._instance) { return App._instance; }
     this.webServer = new WebServer();

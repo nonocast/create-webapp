@@ -24,6 +24,16 @@ class Request {
 
 	async message() {
 		let response = await this.client.get('/api/v1/message');
+		return response.data.message;
+	}
+
+	async accessRecords() {
+		let response = await this.client.get('/api/v1/accessRecords');
+		return response.data;
+	}
+
+	async accessRecordSummary() {
+		let response = await this.client.get('/api/v1/accessRecords/summary');
 		return response.data;
 	}
 }

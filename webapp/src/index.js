@@ -7,9 +7,7 @@ import './index.css';
 localStorage.debug = 'app*'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <App />,
   document.getElementById('root')
 );
 

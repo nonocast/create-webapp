@@ -3,11 +3,13 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
 const AccessSchema = new Schema({
-  ip: { type: String, required: false },
+  // method+path: GET /hello
+  key: { type: String, required: true, index: true },
+  ip: { type: String, required: false, index: true },
   method: { type: String, required: true },
-  path: { type: String, required: true, indexed: true },
+  path: { type: String, required: true },
   originalUrl: { type: String, required: true },
-  status: { type: Number, required: false },
+  status: { type: Number, required: false, index: true },
   time: { type: Number, required: false },
   length: { type: Number, required: false }
 });

@@ -6,7 +6,7 @@ if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'development';
 }
 
-let app = new App();
+app = App.instance;
 
 let main = async () => {
 	await app.open();

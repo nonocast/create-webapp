@@ -15,8 +15,7 @@ const router = new Router({ prefix: '/api/v1/oauth' });
  * - 如果cookie包含user则callback回redirectUri
  * - 否则给出登录页面
  * 
- * 
- * code和token的区别: code适用于跨域登录, token适用于同域, 直接给页面注入cookie
+ * code和token的区别: code适用于跨域登录, token适用于同域, 直接给页面注入cookie, 这里token和标准implict方式有些区别,标准implict采用#token=xxx
  * 
  * @api public
  */
@@ -65,13 +64,16 @@ router.post('/authorize', async ctx => {
 
     let url = new URL(redirect_uri);
     if (response_type === 'code') {
-      // url.searchParams.set('code', await generateAuthorizationCode(ctx, user));
+      let payload = { user: { username: user.username } };
+      let code = jwt.sign(payload, config.security.jwtSecret, { expiresIn: '1h' });
+      logger.info(`oauth code: generate jwt for user - ${user.username}`);
+      url.searchParams.set('code', code);
     }
 
     if (response_type === 'token') {
       let payload = { user: { username: user.username } };
       let access_token = jwt.sign(payload, config.security.jwtSecret, { expiresIn: '1h' });
-      // ctx.cookies.set('token', access_token, { httpOnly: false });
+      logger.info(`oauth token: generate jwt for user - ${user.username}`);
       ctx.cookies.set('token', access_token, { httpOnly: false });
     }
 
@@ -99,6 +101,7 @@ router.post('/token', async ctx => {
   let { grant_type } = ctx.request.body;
 
   if (grant_type === 'authorization_code') {
+    ctx.body = { access_token: ctx.request.body.code };
 
   } else if (grant_type === 'password') {
     let { username, password } = ctx.request.body;
@@ -110,13 +113,25 @@ router.post('/token', async ctx => {
 
       let payload = { user: { username: user.username } };
       let access_token = jwt.sign(payload, config.security.jwtSecret, { expiresIn: '1h' });
+      logger.info(`oauth password: generate jwt for user - ${user.username}`);
       ctx.body = { access_token };
     } catch (error) {
-      debug(error);
+      logger.warn(error);
       ctx.throw(400, error.message);
     }
   } else if (grant_type === 'client_credentials') {
+    let { client_id, client_secret } = ctx.request.body;
 
+    if (!client_id) { ctx.throw(400, 'Please specify `client_id`'); }
+    if (!client_secret) { ctx.throw(400, 'Please specify `client_secret`'); }
+
+    // mock client
+    if (client_id === 'app' && client_secret === 'P@ssw0rd') {
+      let payload = { client: { username: 'app' } };
+      let access_token = jwt.sign(payload, config.security.jwtSecret, { expiresIn: '1h' });
+      logger.info(`oauth client credentials: generate jwt for client - ${payload.client.username}`);
+      ctx.body = { access_token };
+    }
   } else {
     ctx.throw(400, 'Please specify `grant_type`');
   }

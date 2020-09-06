@@ -92,6 +92,7 @@ async function log(winston, ctx, start, len, err, event) {
   // winston.log(err || status >= 400 ? 'warn' : 'info', `${ctx.method} ${ctx.originalUrl} ${status} ${context.res.time} ${length ? bytes(length).toLowerCase() : '-'}`, context);
   let Access = mongoose.model('Access');
   await Access.create({
+    key: `${ctx.method} ${ctx.path}`,
     ip: ctx.ip,
     method: ctx.method,
     path: ctx.path,
