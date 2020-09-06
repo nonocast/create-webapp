@@ -1,5 +1,7 @@
+# 成品配置 (线上、私有化、测试版本, 根据服务器进行配置, /etc/create-webapp/config/production.yaml)
 port: 10376
 db: mongodb://127.0.0.1:27017/create-webapp
 logger:
+  level: info
   file: true
-  console: true
+  console: false

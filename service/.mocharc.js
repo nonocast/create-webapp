@@ -1,4 +1,4 @@
 module.exports = {
-	recursive: false,
+	recursive: true,
 	watch: false
 };

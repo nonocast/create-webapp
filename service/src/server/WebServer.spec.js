@@ -1,4 +1,5 @@
 require('should');
+require('../model');
 const WebServer = require('./WebServer');
 const debug = require('debug')('test');
 const config = require('config');
@@ -17,7 +18,7 @@ describe('WebServer', async () => {
   });
 
   it('GET /', async () => {
-    let response = await axios.get('/api/');
+    let response = await axios.get('/api/v1');
     // debug(response.data);
   });
 });

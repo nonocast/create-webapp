@@ -20,7 +20,7 @@ let logger = createLogger();
 if (config.logger.file) {
   logger.add(
     new transports.DailyRotateFile({
-      level: 'info',
+      level: config.logger.level,
       json: true,
       dirname: '/var/log/create-webapp',
       filename: 'app-%DATE%.log',
@@ -42,7 +42,7 @@ if (config.logger.file) {
 if (config.logger.console) {
   logger.add(
     new transports.Console({
-      level: 'debug',
+      level: config.logger.level,
       handleExceptions: true,
       json: false,
       format: combine(

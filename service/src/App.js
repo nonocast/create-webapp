@@ -1,9 +1,12 @@
 const debug = require('debug')('app');
-const mongoose = require('mongoose');
 const WebServer = require('./server/WebServer');
 const logger = require('./service/logger');
 const config = require('config');
+const moment = require('moment');
 const version = require('../../package.json').version;
+const mongoose = require('mongoose');
+
+require('./model');
 
 class App {
   static get instance() {
@@ -14,17 +17,13 @@ class App {
   constructor() {
     if (App._instance) { return App._instance; }
     this.webServer = new WebServer();
-    this.version = version;
-    debug(this.version);
   }
 
-
   async open() {
-    logger.info(`application starting... pid: ${process.pid}`);
+    logger.info(`application starting ... ver: ${version}, pid: ${process.pid}`);
 
     await this.openDatabase();
     await this.openWebServer();
-
   }
 
   async close() {

@@ -9,6 +9,7 @@ const bytes = require('bytes')
 const chalk = require('chalk')
 const util = require('util')
 const debug = require('debug')('app');
+const mongoose = require('mongoose');
 
 /**
  * Expose logger.
@@ -55,10 +56,10 @@ function dev(winston, opts) {
     res.once('finish', onfinish)
     res.once('close', onclose)
 
-    function done(event) {
+    async function done(event) {
       res.removeListener('finish', onfinish)
       res.removeListener('close', onclose)
-      log(winston, ctx, start, counter ? counter.length : length, null, event)
+      await log(winston, ctx, start, counter ? counter.length : length, null, event)
     }
   }
 }
@@ -67,7 +68,10 @@ function dev(winston, opts) {
  * Log helper.
  */
 
-function log(winston, ctx, start, len, err, event) {
+async function log(winston, ctx, start, len, err, event) {
+  if (process.env.NODE_ENV === 'test') return;
+  if (ctx.path.startsWith('/api/assets')) return;
+
   // get the status code of the response
   const status = err
     ? (err.isBoom ? err.output.statusCode : err.status || 500)
@@ -83,23 +87,19 @@ function log(winston, ctx, start, len, err, event) {
     length = len;
   }
 
-  let context = {
-    req: {
-      ip: ctx.ip,
-      method: ctx.method,
-      path: ctx.path,
-      originalUrl: ctx.originalUrl,
-    },
-    res: {
-      status,
-      time: time(start),
-      length
-    }
-  };
-
-  console.log(`${err || status >= 400 ? chalk.yellow('warn') : chalk.green('info')}: ${ctx.method} ${ctx.originalUrl} ${status} ${context.res.time} ${length ? bytes(length).toLowerCase() : '-'}`);
+  console.log(`${err || status >= 400 ? chalk.yellow('warn') : chalk.green('info')}: ${ctx.method} ${ctx.originalUrl} ${status} ${time(start)} ${length ? bytes(length).toLowerCase() : '-'}`);
   // save to mongodb
   // winston.log(err || status >= 400 ? 'warn' : 'info', `${ctx.method} ${ctx.originalUrl} ${status} ${context.res.time} ${length ? bytes(length).toLowerCase() : '-'}`, context);
+  let Access = mongoose.model('Access');
+  await Access.create({
+    ip: ctx.ip,
+    method: ctx.method,
+    path: ctx.path,
+    originalUrl: ctx.originalUrl,
+    status,
+    time: Date.now() - start,
+    length
+  });
 }
 
 /**

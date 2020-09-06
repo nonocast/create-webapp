@@ -1,5 +1,10 @@
 port: 10376
 db: mongodb://127.0.0.1:27017/create-webapp
 logger:
+  level: debug
   file: false
   console: true
+security:
+  jwtSecret: QWZZuUjA
+  publicKey: ./security/public-key
+  privateKey: ./security/private-key

@@ -1,5 +1,7 @@
+# 单元测试配置
 port: 10377
 db: mongodb://127.0.0.1:27017/create-webapp
 logger:
+  level: warn
   file: false
-  console: false
+  console: true
