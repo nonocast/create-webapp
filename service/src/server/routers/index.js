@@ -7,7 +7,6 @@ const access = require('./v1/access');
 
 let routers = [oauthServer, home, users, access];
 
-
 let entries = [];
 
 _.each(routers, router => {
@@ -20,7 +19,5 @@ _.each(routers, router => {
   });
 });
 
-module.exports = {
-  entries,
-  routers: combineRouters(...routers)
-}
+exports.entries = entries;
+exports.routers = combineRouters(...routers);
