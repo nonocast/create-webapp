@@ -10,6 +10,7 @@ const chalk = require('chalk')
 const util = require('util')
 const debug = require('debug')('app');
 const mongoose = require('mongoose');
+const { accessLogger } = require('../../service/logger');
 
 /**
  * Expose logger.
@@ -87,19 +88,22 @@ async function log(winston, ctx, start, len, err, event) {
     length = len;
   }
 
-  console.log(`${err || status >= 400 ? chalk.yellow('warn') : chalk.green('info')}: ${ctx.method} ${ctx.originalUrl} ${status} ${time(start)} ${length ? bytes(length).toLowerCase() : '-'}`);
-  // save to mongodb
-  // winston.log(err || status >= 400 ? 'warn' : 'info', `${ctx.method} ${ctx.originalUrl} ${status} ${context.res.time} ${length ? bytes(length).toLowerCase() : '-'}`, context);
-  let Access = mongoose.model('Access');
-  await Access.create({
-    key: `${ctx.method} ${ctx.path}`,
-    ip: ctx.ip,
-    method: ctx.method,
-    path: ctx.path,
-    originalUrl: ctx.originalUrl,
-    status,
-    time: Date.now() - start,
-    length
+  let level = err || status >= 400 ? 'warn' : 'info';
+  let message = `${ctx.method} ${ctx.originalUrl} ${status} ${time(start)} ${length ? bytes(length).toLowerCase() : '-'}`;
+  accessLogger.log(level, message, {
+    route: `${ctx.method} ${ctx.path}`,
+    req: {
+      ip: ctx.ip,
+      userAgent: ctx.userAgent.source,
+      method: ctx.method,
+      path: ctx.path,
+      originalUrl: ctx.originalUrl,
+    },
+    res: {
+      status,
+      time: Date.now() - start,
+      length
+    }
   });
 }
 

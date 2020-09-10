@@ -15,61 +15,66 @@ const app = format((info, opts) => {
   return info;
 });
 
-let logger = createLogger();
+const create = tag => {
+  let logger = createLogger();
 
-if (config.logger.file) {
-  logger.add(
-    new transports.DailyRotateFile({
-      level: config.logger.level,
-      json: true,
-      dirname: '/var/log/create-webapp',
-      filename: 'app-%DATE%.log',
-      datePattern: 'YYYY-MM-DD-HH',
-      zippedArchive: false,
-      maxSize: '20m',
-      maxFiles: '7d',
-      handleExceptions: true,
-      format: combine(
-        errors({ stack: true }),
-        timestamp(),
-        app({ app: 'create-webapp' }),
-        json()
-      )
-    })
-  );
+  if (config.logger.file) {
+    logger.add(
+      new transports.DailyRotateFile({
+        level: config.logger.level,
+        json: true,
+        dirname: '/var/log/create-webapp',
+        filename: `${tag}-%DATE%.log`,
+        datePattern: 'YYYY-MM-DD-HH',
+        zippedArchive: false,
+        maxSize: '20m',
+        maxFiles: '7d',
+        handleExceptions: true,
+        format: combine(
+          errors({ stack: true }),
+          timestamp(),
+          app({ app: 'create-webapp' }),
+          json()
+        )
+      })
+    );
+  }
+
+  if (config.logger.console) {
+    logger.add(
+      new transports.Console({
+        level: config.logger.level,
+        handleExceptions: true,
+        json: false,
+        format: combine(
+          colorize(),
+          errors({ stack: true }),
+          simple(),
+          printf(info => {
+            let level = info.level;
+            switch (level) {
+              case "info":
+                level = chalk.cyan(level);
+                break;
+              case "warn":
+                level = chalk.yellow(level);
+                break;
+              case "error":
+                level = chalk.red(level);
+                break;
+              default:
+                break;
+            }
+
+            return `${level}: ${info.message}`;
+          })
+        )
+      })
+    );
+  }
+
+  return logger;
 }
 
-if (config.logger.console) {
-  logger.add(
-    new transports.Console({
-      level: config.logger.level,
-      handleExceptions: true,
-      json: false,
-      format: combine(
-        colorize(),
-        errors({ stack: true }),
-        simple(),
-        printf(info => {
-          let level = info.level;
-          switch (level) {
-            case "info":
-              level = chalk.cyan(level);
-              break;
-            case "warn":
-              level = chalk.yellow(level);
-              break;
-            case "error":
-              level = chalk.red(level);
-              break;
-            default:
-              break;
-          }
-
-          return `${level}: ${info.message}`;
-        })
-      )
-    })
-  );
-}
-
-module.exports = logger;
+exports.logger = create('app');
+exports.accessLogger = create('access');

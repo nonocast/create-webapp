@@ -4,7 +4,7 @@ const debug = require('debug')('app');
 const md5 = require('md5');
 const { nanoid } = require('nanoid');
 const jwt = require('jsonwebtoken');
-const logger = require('../../../../service/logger');
+const { logger } = require('../../../../service/logger');
 
 const router = new Router({ prefix: '/api/v1/oauth' });
 

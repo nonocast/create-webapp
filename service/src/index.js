@@ -1,5 +1,5 @@
 const debug = require('debug')('app');
-const logger = require('./service/logger');
+const { logger } = require('./service/logger');
 const App = require('./App');
 
 if (!process.env.NODE_ENV) {

@@ -1,6 +1,6 @@
 const debug = require('debug')('app');
 const WebServer = require('./server/WebServer');
-const logger = require('./service/logger');
+const { logger } = require('./service/logger');
 const config = require('config');
 const moment = require('moment');
 const version = require('../../package.json').version;

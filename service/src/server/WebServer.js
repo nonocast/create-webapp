@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const config = require('config');
-const logger = require('../service/logger');
+const { logger } = require('../service/logger');
 const debug = require('debug')('app');
 const path = require('path');
 const Koa = require('koa');
@@ -9,6 +9,7 @@ const koaViews = require('koa-views');
 const cors = require('@koa/cors');
 const koaJson = require('koa-json');
 const koaBodyParser = require('koa-bodyparser');
+const { userAgent } = require('koa-useragent');
 const koaLogger = require('./middleware/koa-logger');
 const koaMongoose = require('./middleware/koa-mongoose');
 const { entries, routers } = require('./routers');
@@ -23,6 +24,7 @@ class WebServer {
 		let koa = new Koa();
 		koa.proxy = true;
 		koa.use(cors())
+			.use(userAgent)
 			.use(koaLogger(logger))
 			.use(koaJson())
 			.use(koaBodyParser())

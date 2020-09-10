@@ -6,7 +6,6 @@ const auth = require('../../middleware/koa-auth');
 const router = new Router({ prefix: '/api/v1' });
 
 router.get('/', ctx => {
-  // logger.info(`processid: ${process.pid}`, { pid: process.pid });
   ctx.body = {
     status: 'running',
     pid: process.pid

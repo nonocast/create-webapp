@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const debug = require('debug')('app:auth');
-const logger = require('../../service/logger');
+const { logger } = require('../../service/logger');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const moment = require('moment');

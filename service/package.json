@@ -25,6 +25,7 @@
     "koa-morgan": "^1.0.1",
     "koa-router": "^9.1.0",
     "koa-static": "^5.0.0",
+    "koa-useragent": "^4.0.0",
     "koa-views": "^6.3.0",
     "md5": "^2.3.0",
     "moment": "^2.27.0",
