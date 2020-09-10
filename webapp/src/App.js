@@ -1,12 +1,45 @@
 import React, { Component } from 'react';
-import { Button, Table } from 'antd';
+import { Button, Table, Menu } from 'antd';
+import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
 import './App.less';
 import Cookies from 'js-cookie'
 import Debug from 'debug';
 import request from './request';
 import moment from 'moment';
 
+const { SubMenu } = Menu;
+
 const debug = Debug('app');
+
+function App1(props) {
+  return (
+    <div style={{ background: '#0F4C81', height: '100vh' }}>
+      <Menu mode="horizontal">
+        <Menu.Item key="mail" icon={<MailOutlined />}>
+          Navigation One
+        </Menu.Item>
+        <Menu.Item key="app" disabled icon={<AppstoreOutlined />}>
+          Navigation Two
+        </Menu.Item>
+        <SubMenu icon={<SettingOutlined />} title="Navigation Three - Submenu">
+          <Menu.ItemGroup title="Item 1">
+            <Menu.Item key="setting:1">Option 1</Menu.Item>
+            <Menu.Item key="setting:2">Option 2</Menu.Item>
+          </Menu.ItemGroup>
+          <Menu.ItemGroup title="Item 2">
+            <Menu.Item key="setting:3">Option 3</Menu.Item>
+            <Menu.Item key="setting:4">Option 4</Menu.Item>
+          </Menu.ItemGroup>
+        </SubMenu>
+        <Menu.Item key="alipay">
+          <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
+            Navigation Four - Link
+          </a>
+        </Menu.Item>
+      </Menu>
+    </div>
+  );
+}
 
 function App(props) {
   return (
@@ -99,7 +132,6 @@ let hoc = (WrappedComponent) => {
     }
 
     async componentDidMount() {
-      debug('>>> componentDidMount', window.location);
       let token = Cookies.get('token');
 
       if (!token) {
