@@ -1,8 +1,18 @@
 - type: log
-  enabled: true
   paths:
-    - /var/log/create-webapp/*.log
+    - /var/log/create-webapp/app*.log
+  fields:
+    type: create-webapp-app
+  json.keys_under_root: true
+  json.overwrite_keys: true
+  json.message_key: message
+  json.add_error_key: true
 
+- type: log
+  paths:
+    - /var/log/create-webapp/access*.log
+  fields:
+    type: create-webapp-access
   json.keys_under_root: true
   json.overwrite_keys: true
   json.message_key: message
