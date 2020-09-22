@@ -95,6 +95,11 @@ router.post('/authorize', async ctx => {
  * 
  * grant_type=password&username=foo&password=bar&scope=&client_id=xxx&client_secret=xxx
  * 
+ * ➜  ~ curl -XPOST --data 'grant_type=password&username=nonocast&password=P@ssw0rd' http://localhost:10376/api/v1/oauth/token
+ * {
+ *   "access_token": "..."
+ * }
+ * 
  * @api public
  */
 router.post('/token', async ctx => {
